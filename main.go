@@ -10,7 +10,7 @@ import (
 
 func displayResult(food string, foodType string) {
 	var foodTypeColour *color.Color
-	switch foodType {
+	switch foodType { // change the color based on the type of food
 	case string(APPETIZER):
 		foodTypeColour = color.New(color.FgHiGreen).Add(color.Bold)
 	case string(MAIN_COURSE):
@@ -20,30 +20,33 @@ func displayResult(food string, foodType string) {
 	default:
 		panic(errors.New("did not expect food type " + foodType))
 	}
+
+	// DISPLAY THE RESULT using various colours and formatting
 	color.New(color.FgHiCyan).Add(color.Bold).Print(strings.Title(food))
 	fmt.Print(" is a ")
 	foodTypeColour.Print(foodType)
 	fmt.Println()
 }
 
+// program starts HERE
 func main() {
-	setupConfig()
-	res, err := promptFood()
-	if err != nil {
+	setupConfig()            // configures defaults, setups up Viper (library for configs), loads configs
+	res, err := promptFood() // prompt user to enter a food
+	if err != nil {          // handle the error if there is one
 		panic(err)
 	}
 
-	foundFoods := search(res)
-	if len(foundFoods) == 1 {
+	foundFoods := search(res) // search for the inputed food
+	if len(foundFoods) == 1 { // display the result if there is only one result
 		displayResult(foundFoods[0], typesOfFoods[foundFoods[0]])
-	} else if len(foundFoods) > 1 {
+	} else if len(foundFoods) > 1 { // allow the user to specify the food they want to know about
 		color.Blue("\nFound more than one result.\n")
-		res, err := promptSelectFood(foundFoods)
+		res, err := promptSelectFood(foundFoods) // opens the prompt to select the available search results
 		if err != nil {
 			panic(err)
 		}
-		displayResult(res, typesOfFoods[res])
-	} else { // shouldn't get here under normal circumstances
+		displayResult(res, typesOfFoods[res]) // displays the selected result
+	} else { // shouldn't get here under normal circumstances - promptFood() filters invalid results
 		panic(errors.New("unexpected number of search results"))
 	}
 }

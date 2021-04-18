@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func setDefaults() {
+func setDefaults() { // default types of foods when there is nothing specified in the config
 	viper.SetDefault("foods", map[string]string{
 		// 7 Appetizers
 		"nigiri sushi":   string(APPETIZER),
@@ -33,16 +33,16 @@ func setDefaults() {
 }
 
 func setupConfig() {
-	setDefaults()
+	setDefaults() // apply defaults
 
 	viper.SetConfigName("data")      // name of config file (without extension)
 	viper.SetConfigType("json")      // REQUIRED if the config file does not have the extension in the name
 	viper.AddConfigPath("$HOME/.fm") // call multiple times to add many search paths
 	viper.AddConfigPath(".")         // optionally look for config in the working directory
 
+	// apply settings from configs if that exists
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			// Config file not found; ignore error if desired
 			// viper.SafeWriteConfig() // could create a new config with the defaults
 		} else {
 			// Config file was found but another error was produced
@@ -50,5 +50,6 @@ func setupConfig() {
 		}
 	}
 
+	// load typesOfFoods with data
 	typesOfFoods = viper.GetStringMapString("foods")
 }

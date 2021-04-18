@@ -9,6 +9,7 @@ import (
 )
 
 func promptFood() (string, error) {
+	// validates if an inputed food exists
 	validate := func(input string) error {
 		if len(search(input)) > 0 {
 			return nil
@@ -16,23 +17,26 @@ func promptFood() (string, error) {
 		return errors.New("invalid input")
 	}
 
+	// settings for the prompt
 	prompt := promptui.Prompt{
 		Label:    "Enter a food",
 		Validate: validate,
 	}
 
+	// open the prompt
 	res, err := prompt.Run()
 
-	return res, err
+	return res, err // return information about the prompt
 }
 
 func promptSelectFood(selections []string) (string, error) {
-	type Food struct {
+	type Food struct { // definition of a food item in the prompt
 		Name string
 		Type string
 	}
-	items := []Food{}
 
+	// a list of displayed foods is created
+	items := []Food{}
 	for _, nameOfFood := range selections {
 		items = append(items, Food{
 			Name: strings.Title(nameOfFood),
@@ -40,6 +44,7 @@ func promptSelectFood(selections []string) (string, error) {
 		})
 	}
 
+	// how the prompt should be displayed
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . | white | bold }}",
 		Active:   "\U0001F374 {{ .Name | green | bold }} ({{ .Type | cyan }})",
@@ -51,6 +56,7 @@ func promptSelectFood(selections []string) (string, error) {
 {{ "Type:" | faint }}	{{ .Type | yellow }}`,
 	}
 
+	// for using the SEARCH feature in the prompt
 	searcher := func(input string, index int) bool {
 		foodItem := items[index]
 		name := strings.Replace(strings.ToLower(foodItem.Name), " ", "", -1)
@@ -59,6 +65,7 @@ func promptSelectFood(selections []string) (string, error) {
 		return fuzzy.MatchNormalizedFold(name, input)
 	}
 
+	// settings for the prompt
 	prompt := promptui.Select{
 		Label: "Select a food:",
 		Items: items,
@@ -68,7 +75,8 @@ func promptSelectFood(selections []string) (string, error) {
 		Searcher:  searcher,
 	}
 
+	// open prompt
 	_, res, err := prompt.Run()
 
-	return res, err
+	return res, err // return results of the prompt
 }
