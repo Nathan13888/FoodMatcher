@@ -29,16 +29,16 @@ func promptFood() (string, error) {
 	return res, err // return information about the prompt
 }
 
-func promptSelectFood(selections []string) (string, error) {
-	type Food struct { // definition of a food item in the prompt
-		Name string
-		Type string
-	}
+type FoodItem struct { // definition of a food item in the prompt
+	Name string
+	Type string
+}
 
+func promptSelectFood(selections []string) (string, error) {
 	// a list of displayed foods is created
-	items := []Food{}
+	items := []FoodItem{}
 	for _, nameOfFood := range selections {
-		items = append(items, Food{
+		items = append(items, FoodItem{
 			Name: strings.Title(nameOfFood),
 			Type: typesOfFoods[nameOfFood],
 		})
@@ -71,12 +71,12 @@ func promptSelectFood(selections []string) (string, error) {
 		Items: items,
 		// IsVimMode: true,
 		Templates: templates,
-		Size:      3,
+		Size:      9,
 		Searcher:  searcher,
 	}
 
 	// open prompt
-	_, res, err := prompt.Run()
+	i, _, err := prompt.Run()
 
-	return res, err // return results of the prompt
+	return strings.ToLower(items[i].Name), err // return results of the prompt
 }
